@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import datetime
 import math
+import json
+import pickle
 
 # World Data URLS
 BASE_URL = "https://raw.githubusercontent.com/CSSEGISandData/" + \
@@ -452,8 +454,41 @@ def collect_US_data(BASE_URL, FOLDER_US, URL_TESTS_US, URL_US_States_vaccine):
         dict_df_US_counties[c] = dict_df_US_counties[c].fillna(method='ffill').cummax()
         dict_df_US_counties[c].to_csv(FOLDER_US + c +'_Counties.csv')
     pops_US_counties.to_csv(FOLDER_US + 'pops_US_counties.csv') 
+    
+
+def collect_geojson_data():    
+    countries_geojson = json.load(open("../data/WORLD/countries.geo.json"))
+    us_states_geojson = json.load(open("../data/USA/us-states.json"))
+    us_counties_geojson = json.load(open("../data/USA/us-counties.json"))
+
+    countries_map_id = []
+    for i, d in enumerate(countries_geojson["features"]):
+        countries_map_id.append(d["id"])
+
+    us_counties_map_id = []
+    us_counties_map_name = []
+    for i, v in enumerate(us_counties_geojson["features"]):
+        us_counties_map_id.append(v["id"])
+        us_counties_map_name.append(v["properties"]["name"])
+
+    us_states_map_id = []
+    for i, v in enumerate(us_states_geojson["features"]):
+        us_states_map_id.append(v["id"])
+        
+    geomaps = {'countries_map_id': countries_map_id, 
+               'us_counties_map_id': us_counties_map_id,
+               'us_counties_map_name': us_counties_map_name,
+               'us_states_map_id': us_states_map_id,
+               'countries_geojson': countries_geojson,
+               'us_states_geojson': us_states_geojson,
+               'us_counties_geojson': us_counties_geojson
+              }
+    with open('../data/geomaps.pickle', 'wb') as geofp:
+        pickle.dump(geomaps, geofp, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 if __name__ == "__main__":
     collect_world_data(BASE_URL, FOLDER_WORLD, URL_TESTS, URL_vaccine)
     collect_US_data(BASE_URL, FOLDER_US, URL_TESTS_US, URL_US_States_vaccine)
+    collect_geojson_data()
+

@@ -32,7 +32,7 @@ RUN python data_downloader.py
 
 # start voila dahboard
 WORKDIR /home/jovyan
-CMD ["voila", "covid/notebooks/Dashboard.ipynb", "--VoilaConfiguration.theme='dark'", "--MappingKernelManager.cull_interval=60", "--MappingKernelManager.cull_idle_timeout=300", "--no-browser"]
+CMD ["voila", "covid/notebooks/Bloomberg Covid Dashboard.ipynb", "--VoilaConfiguration.theme='dark'", "--MappingKernelManager.cull_interval=60", "--MappingKernelManager.cull_idle_timeout=300", "--no-browser"]
 
 # EXPOSE 8888
 # start jupyter notebook
